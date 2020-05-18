@@ -1,0 +1,2 @@
+<!--pages/index.wxml-->
+<button bindtap="callCloudFunction">test cloud</button>
