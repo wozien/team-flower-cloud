@@ -70,19 +70,13 @@ function update_quota({ team_id, openid, inc}) {
  * @param {*} param0 
  */
 function remove_member({team_id, openid}) {
-  const doc =  teamCollection.doc(team_id);
-  
-  return doc.get().then(res => {
-    const { members } = res.data;
-    const index = members.findIndex(mb => mb.openid === openid);
-    if(index > -1) {
-      members.splice(index, 1);
+  return teamCollection.where({
+    _id: team_id,
+    'members.openid': openid
+  }).update({
+    data: {
+      'members.$.is_delete': 1
     }
-    return doc.update({
-      data: {
-        members
-      }
-    });
   });
 }
 
@@ -91,21 +85,35 @@ function remove_member({team_id, openid}) {
  * @param {*} param0 
  */
 function add_member({team_id, member}) {
-  const { openid } = member;
-  const search = teamCollection.where({
-    _id: team_id,
-    'members.openid': openid
-  });
-
-  return search.get().then(res => {
-    if(!res.data.length) {
-      return search.update({
-        data: {
-          'members': _.push(member)
-        }
-      })
+  return teamCollection.doc(team_id).get().then(res => {
+    const { members } = res.data;
+    const index = members.findIndex(mb => mb.openid === member.openid);
+    if(index > -1) {
+      const oldMember = members[index];
+      if(oldMember.is_delete == 1) {
+        // 已删除的成员再次加入
+        members.splice(index, 1, member);
+        return update_members({team_id, members});
+      } else {
+        // 已在团队中
+        return true;
+      }
+    } else {
+      members.push(member);
+      return update_members({team_id, members});
     }
-    return true;
+  })
+}
+
+/**
+ * 更新成员数据
+ * @param {*} param0 
+ */
+function update_members({team_id, members}) {
+  return teamCollection.doc(team_id).update({
+    data: {
+      members
+    }
   });
 }
 
