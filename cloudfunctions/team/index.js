@@ -30,6 +30,7 @@ function reset_quota({ team_id, quota }) {
     .doc(team_id)
     .update({
       data: {
+        'quota': quota,
         'members.$[].quota': quota
       }
     });
