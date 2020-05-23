@@ -49,7 +49,7 @@ exports.main = async (event, context) => {
   try {
     const result = await cloud.openapi.subscribeMessage.send({
       touser: params.touser,
-      page: 'rank?team_id=' + params.team_id,
+      page: 'pages/rank/rank?team_id=' + params.team_id,
       lang: 'zh_CN',
       templateId: templateId,
       data: templateData
