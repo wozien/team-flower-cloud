@@ -11,10 +11,13 @@ const _ = db.command;
  * @param {*} param0 
  */
 function get_list({team_id, to, skip}) {
-  return history.where({
+  return history.where(_.or([{
     team_id,
     to
-  }).orderBy('date', 'desc')
+  }, {
+    team_id,
+    from: 'SYSTEM'
+  }])).orderBy('date', 'desc')
     .skip(skip)
     .limit(10)
     .get()
