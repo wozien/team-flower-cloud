@@ -132,6 +132,18 @@ function update_members({team_id, members}) {
   });
 }
 
+/**
+ * 更新团队的管理模式
+ * @param {*} param0 
+ */
+function update_mode({ team_id, mode }) {
+  return teamCollection.doc(team_id).update({
+    data: {
+      mode
+    }
+  })
+}
+
 // 云函数入口函数
 exports.main = async (event, context) => {
   const { type, params } = event;
@@ -151,6 +163,8 @@ exports.main = async (event, context) => {
     res = await add_member(params);
   } else if(type === 'reset_flowers') {
     res = await reset_flowers(params);
+  } else if(type === 'update_mode') {
+    res = await update_mode(params);
   }
 
   return res;
