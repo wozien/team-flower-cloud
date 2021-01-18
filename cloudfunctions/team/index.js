@@ -37,6 +37,20 @@ function reset_quota({ team_id, quota }) {
 }
 
 /**
+ * 重置小红花
+ * @param {*} param0 
+ */
+function reset_flowers({ team_id }) {
+  return teamCollection
+    .doc(team_id)
+    .update({
+      data: {
+        'members.$[].flowers': 0
+      }
+    })
+}
+
+/**
  * 增加/扣除红花
  * @param {*} param0 
  */
@@ -135,6 +149,8 @@ exports.main = async (event, context) => {
     res = await remove_member(params);
   } else if(type === 'add_member') {
     res = await add_member(params);
+  } else if(type === 'reset_flowers') {
+    res = await reset_flowers(params);
   }
 
   return res;
