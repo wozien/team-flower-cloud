@@ -12,7 +12,7 @@ async function get_list({ team_id, skip }) {
     .skip(skip)
     .limit(6)
     .get()
-    
+        
   return res
 }
 
