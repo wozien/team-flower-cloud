@@ -22,7 +22,7 @@ async function check_msg({ content }) {
       return { code: 0, msg: '合法内容', data: res }
     }
   } catch(err) {
-    if(err.errCode.toString() === '87014') {
+    if(err.errCode && err.errCode.toString() === '87014') {
       return { code: 500, msg: '违规内容', data: err }
     }
     return { code: 502, msg: '接口调用异常', data: err }
@@ -55,7 +55,7 @@ async function check_img({ img, mimeType }) {
       return { code: 0, msg: '合法图片', data: res }
     }
   } catch(err) {
-    if(err.errCode.toString() === '87014') {
+    if(err.errCode && err.errCode.toString()  === '87014') {
       return { code: 500, msg: '违规图片', data: err }
     }
     return { code: 502, msg: '接口调用异常', data: err }

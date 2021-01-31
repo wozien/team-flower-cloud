@@ -1,6 +1,8 @@
 // 云函数入口文件
 const cloud = require('wx-server-sdk')
-cloud.init()
+cloud.init({
+  env: cloud.DYNAMIC_CURRENT_ENV
+})
 
 const db = cloud.database()
 const noticeCollection = db.collection('notice')
@@ -55,6 +57,24 @@ function update_notice({ notice_id, notice }) {
   })
 }
 
+/**
+ * 删除公告
+ * @param {*} param0 
+ */
+async function delete_notice({ notice_id }) {
+  let res = await noticeCollection.doc(notice_id).get()
+  const notice = res && res.data
+
+  if(notice && notice.images && notice.images.length) {
+    // 删除图片
+    await cloud.deleteFile({
+      fileList: notice.images
+    })
+  }
+
+  return noticeCollection.doc(notice_id).remove()
+}
+
 // 云函数入口函数
 exports.main = async (event, context) => {
   const { type, params } = event;
@@ -66,6 +86,8 @@ exports.main = async (event, context) => {
     res = await update_likes(params)
   } else if(type === 'update_notice') {
     res = await update_notice(params)
+  } else if(type === 'delete_notice') {
+    res = await delete_notice(params)
   }
 
   return res
