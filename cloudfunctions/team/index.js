@@ -22,6 +22,21 @@ function rename({ team_id, openid, nickname }) {
 }
 
 /**
+ * 更新头像
+ * @param {*} param0 
+ */
+function update_avatar({ team_id, openid, avatar }) {
+  return teamCollection.where({
+    _id: team_id,
+    'members.openid': openid
+  }).update({
+    data: {
+      'members.$.avatar': avatar
+    }
+  });
+}
+
+/**
  * 重置小红花额度
  * @param {} param0 
  */
@@ -165,6 +180,8 @@ exports.main = async (event, context) => {
     res = await reset_flowers(params);
   } else if(type === 'update_mode') {
     res = await update_mode(params);
+  } else if(type === 'update_avatar') {
+    res = await update_avatar(params);
   }
 
   return res;
